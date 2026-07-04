@@ -1,128 +1,11 @@
-<!DOCTYPE html>
-<html lang="id" class="scroll-smooth">
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>{{ $settings['nama_kelompok'] ?? 'Website KKN Desa Rowokele' }}</title>
+@extends('layouts.app')
 
-<script src="https://cdn.tailwindcss.com"></script>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+@section('title', 'Home - KKN Rowokele')
 
-<style>
-    @keyframes blob {
-        0%, 100% { transform: translate(0, 0) scale(1); }
-        33% { transform: translate(30px, -40px) scale(1.1); }
-        66% { transform: translate(-20px, 20px) scale(0.95); }
-    }
-    .animate-blob { animation: blob 14s infinite ease-in-out; }
-    .animation-delay-2000 { animation-delay: 2s; }
-    .animation-delay-4000 { animation-delay: 4s; }
-    
-    .reveal { 
-        opacity: 0; 
-        transform: translateY(28px); 
-        transition: opacity .8s cubic-bezier(.2,.8,.2,1), transform .8s cubic-bezier(.2,.8,.2,1); 
-    }
-    .reveal.in-view { opacity: 1; transform: none; }
-
-    /* Custom Wave CSS */
-    .wave-shape {
-        position: absolute;
-        bottom: -3px; /* Dioptimasi dari -2px untuk mencegah rendering gap di mobile */
-        left: 0;
-        width: 100%;
-        line-height: 0;
-    }
-
-    .menu-circle {
-        width: 85px;
-        height: 85px;
-        border-radius: 50%;
-        background: #d97706; /* Amber-600 */
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        color: white;
-        font-size: 28px;
-        margin: 0 auto;
-        box-shadow: 0 10px 25px rgba(217, 119, 6, 0.2);
-        transition: all .3s ease;
-    }
-    .menu-circle:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 15px 35px rgba(217, 119, 6, 0.4);
-    }
-
-    .map-clip {
-        width: 100%;
-        height: 350px;
-        background: #78350f; /* Amber-900 */
-        clip-path: polygon(
-            20% 0%, 40% 5%, 60% 0%, 80% 15%, 100% 40%,
-            95% 70%, 80% 100%, 55% 90%, 30% 100%, 5% 80%, 0% 40%
-        );
-    }
-
-    .event-card-hover:hover {
-        transform: translateY(-8px);
-        box-shadow: 0 20px 40px rgba(120, 53, 15, 0.08);
-    }
-
-    /* Navbar backdrop glass permanen */
-    .navbar-glass-permanent {
-        background: rgba(253, 251, 247, 0.85);
-        backdrop-filter: blur(16px) saturate(120%);
-        -webkit-backdrop-filter: blur(16px) saturate(120%);
-        /* Border-bottom diatur manual lewat class Tailwind responsif */
-    }
-</style>
-</head>
-<body class="bg-[#fdfbf7] text-stone-800 antialiased min-h-screen flex flex-col pt-20">
-{{-- NAVBAR STABIL & RESPONSIVE --}}
-<!-- Ditambahkan md:border-b border-stone-200/50 agar di mobile garis pemotongnya hilang -->
-<nav class="fixed top-0 inset-x-0 z-50 navbar-glass-permanent min-h-20 flex flex-col justify-center shadow-sm border-b-0 md:border-b border-[#78350f]/10">
-    <div class="max-w-7xl mx-auto px-6 lg:px-12 w-full h-20 flex items-center justify-between">
-        <a href="/" class="flex items-center gap-3 font-black text-2xl tracking-tight text-stone-900">
-            <span class="inline-flex items-center justify-center w-10 h-10 rounded-xl overflow-hidden shadow-md">
-                <img src="{{ asset('img/logo.jpeg') }}" alt="Logo" class="w-full h-full object-cover">
-            </span>
-            <span>{{ $settings['nama_kelompok'] ?? 'KKN Rowokele' }}</span>
-        </a>
-
-    {{-- Desktop Menu --}}
-    <div class="hidden md:flex items-center gap-1">
-        <a href="/" class="px-5 py-2 rounded-full text-sm font-bold text-amber-700 bg-amber-600/10">Home</a>
-        <a href="/proker" class="px-5 py-2 rounded-full text-sm font-medium text-stone-600 hover:text-amber-700 hover:bg-amber-600/5 transition">Program</a>
-        <a href="/kegiatan" class="px-5 py-2 rounded-full text-sm font-medium text-stone-600 hover:text-amber-700 hover:bg-amber-600/5 transition">Kegiatan</a>
-        <a href="/anggota" class="px-5 py-2 rounded-full text-sm font-medium text-stone-600 hover:text-amber-700 hover:bg-amber-600/5 transition">Tim</a>
-        <a href="/berita" class="px-5 py-2 rounded-full text-sm font-medium text-stone-600 hover:text-amber-700 hover:bg-amber-600/5 transition">Berita</a>
-        <a href="/galeri" class="px-5 py-2 rounded-full text-sm font-medium text-stone-600 hover:text-amber-700 hover:bg-amber-600/5 transition">Galeri</a>
-    </div>
-
-    {{-- Mobile Hamburger Button --}}
-    <div class="md:hidden flex items-center">
-        <button type="button" id="mobile-menu-btn" class="text-stone-700 hover:text-amber-700 focus:outline-none p-2 text-xl" aria-label="Toggle Menu">
-            <i class="fas fa-bars" id="menu-icon"></i>
-        </button>
-    </div>
-</div>
-
-{{-- Mobile Dropdown Menu --}}
-<div id="mobile-menu" class="hidden md:hidden border-t border-amber-600/10 bg-[#fdfbf7]/95 backdrop-blur-md px-6 py-4 space-y-2 shadow-inner transition-all duration-300">
-    <a href="/" class="block px-4 py-2.5 rounded-xl text-base font-bold text-amber-700 bg-amber-600/10">Home</a>
-    <a href="/proker" class="block px-4 py-2.5 rounded-xl text-base font-medium text-stone-600 hover:text-amber-700 hover:bg-amber-600/5 transition">Program</a>
-    <a href="/kegiatan" class="block px-4 py-2.5 rounded-xl text-base font-medium text-stone-600 hover:text-amber-700 hover:bg-amber-600/5 transition">Kegiatan</a>
-    <a href="/anggota" class="block px-4 py-2.5 rounded-xl text-base font-medium text-stone-600 hover:text-amber-700 hover:bg-amber-600/5 transition">Tim</a>
-    <a href="/berita" class="block px-4 py-2.5 rounded-xl text-base font-medium text-stone-600 hover:text-amber-700 hover:bg-amber-600/5 transition">Berita</a>
-    <a href="/galeri" class="block px-4 py-2.5 rounded-xl text-base font-medium text-stone-600 hover:text-amber-700 hover:bg-amber-600/5 transition">Galeri</a>
-</div>
-</nav>
-{{-- LAYOUT UTAMA HALAMAN --}}
-<div class="w-full bg-[#fdfbf7]">
-
+@section('content')
 {{-- 1. HERO SECTION --}}
 <section class="relative min-h-[650px] flex items-center overflow-hidden bg-cover bg-center"
-         style="background-image: linear-gradient(rgba(0,0,0,.3), rgba(0,0,0,.35)), url('{{ asset('img/1.jpeg') }}');">
+         style="background-image: linear-gradient(rgba(0,0,0,.3), rgba(0,0,0,.35)), url('{{ asset('img/1.webp') }}');">
     
     <div class="relative z-10 w-full max-w-7xl mx-auto px-6 lg:px-12 text-center text-white">
         <span class="hidden md:inline-block text-sm tracking-[3px] uppercase font-semibold text-amber-300">
@@ -139,7 +22,7 @@
     </div>
 
     <div class="wave-shape absolute bottom-0 left-0 w-full z-10">
-        <svg viewBox="0 0 1440 320" class="w-full scale-102 origin-bottom">
+        <svg viewBox="0 0 1440 320" class="w-full scale-102 origin-bottom" aria-hidden="true">
             <path fill="#fdfbf7" d="M0,224L48,208C96,192,192,160,288,170.7C384,181,480,235,576,234.7C672,235,768,181,864,176C960,171,1056,213,1152,218.7C1248,224,1344,192,1392,176L1440,160L1440,324L0,324Z"/>
         </svg>
     </div>
@@ -186,7 +69,12 @@
         
         <div class="flex justify-center reveal">
             <div class="map-clip shadow-2xl relative overflow-hidden w-full max-w-[500px]">
-                <img src="{{ asset('img/2.png') }}" alt="Peta Desa" class="w-full h-full object-cover">
+                <img src="{{ asset('img/2.webp') }}" 
+                     alt="Peta Desa" 
+                     class="w-full h-full object-cover"
+                     width="500"
+                     height="350"
+                     loading="lazy">
                 <div class="absolute inset-0 pointer-events-none" style="box-shadow: inset 0 0 80px rgba(0,0,0,0.7), inset 0 0 40px rgba(0,0,0,0.5);"></div>
             </div>
         </div>
@@ -208,7 +96,12 @@
     <div class="flex gap-6 overflow-x-auto pb-6 px-2 snap-x snap-mandatory scroll-smooth [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
         @forelse($kegiatan as $event)
             <div class="reveal bg-white rounded-2xl overflow-hidden shadow-md hover:shadow-2xl event-card-hover transition duration-300 flex-shrink-0 w-[280px] sm:w-[350px] snap-start border border-stone-100">
-                <img src="{{ $event['img'] }}" alt="Event" class="w-full h-64 object-cover">
+                <img src="{{ $event['img'] }}" 
+                     alt="Event" 
+                     class="w-full h-64 object-cover"
+                     loading="lazy"
+                     width="350"
+                     height="256">
                 <div class="p-6">
                     <div class="text-amber-600 font-bold text-sm tracking-wide">
                         {{ isset($event['tanggal']) ? date('d M Y', strtotime($event['tanggal'])) : 'Coming Soon' }}
@@ -243,7 +136,12 @@
             <div class="reveal bg-white rounded-2xl overflow-hidden shadow-md hover:shadow-2xl transition duration-300 border border-stone-100 flex-shrink-0 w-[280px] sm:w-[350px] snap-start md:w-full">
                 <div class="h-48 overflow-hidden bg-gradient-to-br from-amber-500 to-[#78350f] flex items-center justify-center text-amber-200 text-5xl">
                     @if(!empty($p['gambar']))
-                        <img src="{{ $p['gambar'] }}" alt="Program" class="w-full h-full object-cover">
+                        <img src="{{ $p['gambar'] }}" 
+                             alt="Program" 
+                             class="w-full h-full object-cover"
+                             loading="lazy"
+                             width="350"
+                             height="192">
                     @else
                         <i class="fas fa-file-alt"></i>
                     @endif
@@ -279,7 +177,12 @@
             <div class="reveal bg-white rounded-2xl overflow-hidden shadow-md hover:shadow-2xl transition duration-300 flex flex-col h-full border border-stone-100 flex-shrink-0 w-[280px] sm:w-[350px] snap-start md:w-full">
                 
                 <div class="relative h-48 overflow-hidden bg-stone-200">
-                    <img src="{{ $b['thumbnail'] ?? ($b['gambar'] ?? 'https://images.unsplash.com/photo-1504711434969-e33886168f5c?auto=format&fit=crop&w=600&q=80') }}" class="w-full h-full object-cover">
+                    <img src="{{ $b['thumbnail'] ?? ($b['gambar'] ?? 'https://images.unsplash.com/photo-1504711434969-e33886168f5c?auto=format&fit=crop&w=600&q=80') }}" 
+                         class="w-full h-full object-cover"
+                         loading="lazy"
+                         width="350"
+                         height="192"
+                         alt="{{ $b['judul'] ?? 'Berita' }}">
                 </div>
 
                 <div class="p-6 flex flex-col flex-grow justify-between">
@@ -325,7 +228,12 @@
                     
                     <div class="overflow-y-auto w-full h-full">
                         <div class="relative h-64 md:h-80 w-full bg-stone-100 flex items-center justify-center overflow-hidden">
-                            <img src="{{ $b['thumbnail'] ?? ($b['gambar'] ?? 'https://images.unsplash.com/photo-1504711434969-e33886168f5c') }}" class="w-full h-full object-cover">
+                            <img src="{{ $b['thumbnail'] ?? ($b['gambar'] ?? 'https://images.unsplash.com/photo-1504711434969-e33886168f5c') }}" 
+                                 class="w-full h-full object-cover"
+                                 loading="lazy"
+                                 width="800"
+                                 height="400"
+                                 alt="{{ $b['judul'] ?? 'Berita' }}">
                         </div>
 
                         <div class="p-6 md:p-8 space-y-4">
@@ -402,13 +310,15 @@
                      onmouseenter="this.style.transform = 'translateY(-15px) scale(1.05)'; this.style.zIndex = '100';"
                      onmouseleave="this.style.transform = '{{ $config['transform'] }}'; this.style.zIndex = 'auto';">
                     
-                    {{-- Foto Utama --}}
-                    <img src="{{ $imgUrl }}" class="w-full h-full object-cover block group-hover:scale-110 transition-transform duration-500">
+                    <img src="{{ $imgUrl }}" 
+                         class="w-full h-full object-cover block group-hover:scale-110 transition-transform duration-500"
+                         loading="lazy"
+                         width="200"
+                         height="360"
+                         alt="{{ $caption }}">
                     
-                    {{-- Overlay Gelap saat Hover --}}
                     <div class="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
 
-                    {{-- Wadah Konten Teks Vertikal di Tengah --}}
                     <div class="absolute inset-0 flex items-center justify-center p-2 text-center select-none pointer-events-none">
                         <p class="text-white text-base md:text-lg font-bold tracking-widest uppercase [writing-mode:vertical-lr] rotate-180 opacity-0 translate-y-8 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-500 delay-75 line-clamp-1 whitespace-nowrap drop-shadow-[0_2px_4px_rgba(0,0,0,0.5)]">
                             {{ $caption }}
@@ -419,25 +329,9 @@
         </div>
     </div>
 </section>
-</div>
-{{-- FOOTER --}}
-<footer class="bg-[#b85c27] text-white/90 py-12 text-center text-sm border-t border-white/10 mt-auto">
-    &copy; {{ date('Y') }} {{ $settings['nama_kelompok'] ?? 'KKN Desa Rowokele' }} &middot; Dibangun dengan ❤️ untuk desa
-</footer>
-{{-- JAVASCRIPT CONTROLLER --}}
-<script>
-    // Intersection Observer untuk animasi reveal
-    function initReveal() {
-        const obs = new IntersectionObserver((entries) => {
-            entries.forEach((e) => {
-                if (e.isIntersecting) { e.target.classList.add('in-view'); obs.unobserve(e.target); }
-            });
-        }, { threshold: 0.1 });
-        document.querySelectorAll('.reveal').forEach((el) => obs.observe(el));
-    }
-    document.addEventListener('DOMContentLoaded', initReveal);
 
-    // Controller Modal Berita
+{{-- Script untuk Modal Berita --}}
+<script>
     function bukaModalBerita(index) {
         const modal = document.getElementById(`modal-berita-${index}`);
         if (modal) {
@@ -446,7 +340,6 @@
         }
     }
 
-    // Ganti .style.display murni ke metode seragam agar animasi/toggle berjalan presisi
     function tutupModalBerita(index) {
         const modal = document.getElementById(`modal-berita-${index}`);
         if (modal) {
@@ -454,28 +347,5 @@
             document.body.style.overflow = 'auto';
         }
     }
-
-    // Controller Mobile Navbar Dropdown (Murni JS)
-    document.addEventListener('DOMContentLoaded', function() {
-        const menuBtn = document.getElementById('mobile-menu-btn');
-        const mobileMenu = document.getElementById('mobile-menu');
-        const menuIcon = document.getElementById('menu-icon');
-
-        if (menuBtn && mobileMenu) {
-            menuBtn.addEventListener('click', function() {
-                mobileMenu.classList.toggle('hidden');
-                
-                // Ganti ikon hamburger (fa-bars) menjadi silang (fa-xmark) saat menu terbuka
-                if (mobileMenu.classList.contains('hidden')) {
-                    menuIcon.classList.remove('fa-xmark');
-                    menuIcon.classList.add('fa-bars');
-                } else {
-                    menuIcon.classList.remove('fa-bars');
-                    menuIcon.classList.add('fa-xmark');
-                }
-            });
-        }
-    });
 </script>
-</body>
-</html>
+@endsection

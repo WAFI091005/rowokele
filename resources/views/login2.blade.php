@@ -52,14 +52,35 @@
                     <span id="btn-text-normal"><i class="fas fa-sign-in-alt"></i> Verifikasi & Masuk</span>
                     <span id="btn-text-loading" class="hidden"><i class="fas fa-spinner fa-spin"></i> Menghubungkan...</span>
                 </button>
+                
+                {{-- Link Kembali ke Home --}}
+                <div class="text-center pt-4">
+                    <a href="/" class="text-sm text-stone-400 hover:text-amber-600 transition">
+                        <i class="fas fa-arrow-left mr-1"></i> Kembali ke Beranda
+                    </a>
+                </div>
             </div>
         </div>
     </main>
 
     {{-- JAVASCRIPT NATIVE CONTROLLER --}}
     <script>
-        document.getElementById('input-password').addEventListener('keydown', function(e) {
-            if (e.key === 'Enter') eksekusiLoginMurni();
+        document.addEventListener('DOMContentLoaded', function() {
+            const passwordInput = document.getElementById('input-password');
+            if (passwordInput) {
+                passwordInput.addEventListener('keydown', function(e) {
+                    if (e.key === 'Enter') {
+                        e.preventDefault();
+                        eksekusiLoginMurni();
+                    }
+                });
+            }
+
+            // Auto focus ke username
+            const usernameInput = document.getElementById('input-username');
+            if (usernameInput) {
+                usernameInput.focus();
+            }
         });
 
         function eksekusiLoginMurni() {
@@ -71,16 +92,20 @@
             const btnLoading = document.getElementById('btn-text-loading');
             const btnSubmit = document.getElementById('btn-submit-js');
 
+            // Reset alert
+            if (alertBox) {
+                alertBox.classList.add('hidden');
+            }
+
             if (!username || !password) {
-                errorText.innerText = "Username dan Password wajib diisi!";
-                alertBox.classList.remove('hidden');
+                if (errorText) errorText.innerText = "Username dan Password wajib diisi!";
+                if (alertBox) alertBox.classList.remove('hidden');
                 return;
             }
 
-            alertBox.classList.add('hidden');
-            btnNormal.classList.add('hidden');
-            btnLoading.classList.remove('hidden');
-            btnSubmit.disabled = true;
+            if (btnNormal) btnNormal.classList.add('hidden');
+            if (btnLoading) btnLoading.classList.remove('hidden');
+            if (btnSubmit) btnSubmit.disabled = true;
 
             fetch('/proses-login-murni', {
                 method: 'POST',
@@ -95,22 +120,26 @@
                 if (data.success) {
                     window.location.href = "/admin/dashboard";
                 } else {
-                    errorText.innerText = data.message;
-                    alertBox.classList.remove('hidden');
+                    if (errorText) errorText.innerText = data.message || 'Login gagal!';
+                    if (alertBox) alertBox.classList.remove('hidden');
                     resetTombol();
                 }
             })
             .catch(error => {
-                errorText.innerText = "Terjadi gangguan sistem koneksi!";
-                alertBox.classList.remove('hidden');
+                if (errorText) errorText.innerText = "Terjadi gangguan sistem koneksi!";
+                if (alertBox) alertBox.classList.remove('hidden');
                 resetTombol();
             });
         }
 
         function resetTombol() {
-            document.getElementById('btn-text-normal').classList.remove('hidden');
-            document.getElementById('btn-text-loading').classList.add('hidden');
-            document.getElementById('btn-submit-js').disabled = false;
+            const btnNormal = document.getElementById('btn-text-normal');
+            const btnLoading = document.getElementById('btn-text-loading');
+            const btnSubmit = document.getElementById('btn-submit-js');
+
+            if (btnNormal) btnNormal.classList.remove('hidden');
+            if (btnLoading) btnLoading.classList.add('hidden');
+            if (btnSubmit) btnSubmit.disabled = false;
         }
     </script>
 </body>

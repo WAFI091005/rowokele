@@ -7,7 +7,6 @@ use App\Http\Controllers\GaleriController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\KegiatanController;
 use App\Http\Controllers\ProkerController;
-use App\Livewire\Auth\Login2;
 use App\Services\FirebaseService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -21,7 +20,10 @@ Route::get('/berita', [BeritaController::class, 'index']);
 Route::get('/galeri', [GaleriController::class, 'index']);
 
 // --- Auth Routes ---
-Route::get('/login2', Login2::class)->name('login2');
+// Gunakan view biasa, bukan Livewire
+Route::get('/login2', function () {
+    return view('login2');
+})->name('login2');
 
 // --- Engine Login Murni ---
 Route::post('/proses-login-murni', function (Request $request) {
