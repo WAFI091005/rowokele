@@ -7,10 +7,6 @@ import { BallCollider, CuboidCollider, Physics, RigidBody, useRopeJoint, useSphe
 import { MeshLineGeometry, MeshLineMaterial } from 'meshline';
 import * as THREE from 'three';
 
-// KEMBALIKAN IMPOR LOKAL KE FOLDER RESOURCES SEPERTI MAUMU
-import cardGLB from './assets/card.glb';
-import lanyardPNG from './assets/lanyard.png';
-
 import './Lanyard.css';
 
 extend({ MeshLineGeometry, MeshLineMaterial });
@@ -84,9 +80,9 @@ function Band({
   const vec = new THREE.Vector3(), ang = new THREE.Vector3(), rot = new THREE.Vector3(), dir = new THREE.Vector3();
   const segmentProps = { type: 'dynamic', canSleep: true, colliders: false, angularDamping: 4, linearDamping: 4 };
   
-  // Gunakan referensi variabel cardGLB dari modul impor atas
-  const { nodes, materials } = useGLTF(cardGLB);
-  const texture = useTexture(lanyardImage || lanyardPNG);
+  // Menggunakan string URL statis langsung mengarah ke folder public/assets/
+  const { nodes, materials } = useGLTF('/assets/card.glb');
+  const texture = useTexture(lanyardImage || '/assets/lanyard.png');
   const frontTex = useTexture(frontImage || BLANK_PIXEL);
   const backTex = useTexture(backImage || BLANK_PIXEL);
 
@@ -209,4 +205,5 @@ function Band({
   );
 }
 
-useGLTF.preload(cardGLB);
+// Preload menggunakan path string statis folder public
+useGLTF.preload('/assets/card.glb');
