@@ -38,10 +38,12 @@ class FirebaseService
     }
 
     /** Ambil node settings (info desa, sosmed, dll). */
-    public function settings(): array
-    {
+public function settings(): array
+{
+    return \Illuminate\Support\Facades\Cache::remember('firebase_settings', 3600, function () {
         return (array) ($this->db->getReference('settings')->getValue() ?? []);
-    }
+    });
+}
 
     /** Tambah item baru (return id-nya). */
     public function create(string $path, array $data): string
